@@ -11,14 +11,14 @@
             <td>{{ $message->id }}</td>
         </tr>
         <tr>
-            <th>メッセージ</th>
+            <th>タスク</th>
             <td>{{ $message->content }}</td>
         </tr>
     </table>
-    {{-- メッセージ編集ページへのリンク --}}
-    {!! link_to_route('messages.edit', 'このメッセージを編集', ['message' => $message->id], ['class' => 'btn btn-light']) !!}
+    {{-- タスク編集ページへのリンク --}}
+    {!! link_to_route('messages.edit', 'このタスクを編集', ['message' => $message->id], ['class' => 'btn btn-light']) !!}
 
- {{-- メッセージ削除フォーム --}}
+ {{-- タスク削除フォーム --}}
     {!! Form::model($message, ['route' => ['messages.destroy', $message->id], 'method' => 'delete']) !!}
         {!! Form::submit('削除', ['class' => 'btn btn-danger']) !!}
     {!! Form::close() !!}
