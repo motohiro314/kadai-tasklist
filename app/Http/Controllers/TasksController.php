@@ -15,12 +15,12 @@ class TasksController extends Controller
      */
     public function index()
     {
-        // メッセージ一覧を取得
-        $messages = Task::all();
+        // タスク一覧を取得
+        $tasks = Task::all();
 
-        // メッセージ一覧ビューでそれを表示
-        return view('messages/index', [
-            'messages' => $messages,
+        // タスク一覧ビューでそれを表示
+        return view('tasks/index', [
+            'tasks' => $tasks,
         ]);
 
     }
@@ -32,11 +32,11 @@ class TasksController extends Controller
      */
     public function create()
     {
-         $message = new Task;
+         $task = new Task;
 
         // メッセージ作成ビューを表示
-        return view('messages.create', [
-            'message' => $message,
+        return view('tasks.create', [
+            'task' => $task,
         ]);
     }
 
@@ -49,9 +49,9 @@ class TasksController extends Controller
     public function store(Request $request)
     {
          // メッセージを作成
-        $message = new Task;
-        $message->content = $request->content;
-        $message->save();
+        $task = new Task;
+        $task->content = $request->content;
+        $task->save();
 
         // トップページへリダイレクトさせる
         return redirect('/');
@@ -66,11 +66,11 @@ class TasksController extends Controller
     public function show($id)
     {
          // idの値でメッセージを検索して取得
-        $message = Task::findOrFail($id);
+        $task = Task::findOrFail($id);
 
         // メッセージ詳細ビューでそれを表示
-        return view('messages.show', [
-            'message' => $message,
+        return view('tasks.show', [
+            'task' => $task,
         ]);
     }
 
@@ -83,11 +83,11 @@ class TasksController extends Controller
     public function edit($id)
     {
         // idの値でメッセージを検索して取得
-        $message = Task::findOrFail($id);
+        $task = Task::findOrFail($id);
 
         // メッセージ編集ビューでそれを表示
-        return view('messages.edit', [
-            'message' => $message,
+        return view('tasks.edit', [
+            'task' => $task,
         ]);
     }
 
@@ -119,9 +119,9 @@ class TasksController extends Controller
     public function destroy($id)
     {
         // idの値でメッセージを検索して取得
-        $message =Task::findOrFail($id);
+        $task =Task::findOrFail($id);
         // メッセージを削除
-        $message->delete();
+        $task->delete();
 
         // トップページへリダイレクトさせる
         return redirect('/');
