@@ -101,10 +101,10 @@ class TasksController extends Controller
     public function update(Request $request, $id)
     {
         // idの値でメッセージを検索して取得
-        $message = Task::findOrFail($id);
+        $task = Task::findOrFail($id);
         // メッセージを更新
-        $message->content = $request->content;
-        $message->save();
+        $task->content = $request->content;
+        $task->save();
 
         // トップページへリダイレクトさせる
         return redirect('/');
