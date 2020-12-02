@@ -10,6 +10,7 @@
             <thead>
                 <tr>
                     <th>id</th>
+                    <th>status</th>
                     <th>タスク</th>
                 </tr>
             </thead>
