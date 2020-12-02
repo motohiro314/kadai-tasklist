@@ -22,7 +22,7 @@ class TasksController extends Controller
         return view('tasks/index', [
             'tasks' => $tasks,
         ]);
-
+        
     }
 
     /**
@@ -33,11 +33,11 @@ class TasksController extends Controller
     public function create()
     {
          $task = new Task;
-
         // タスク作成ビューを表示
         return view('tasks.create', [
             'task' => $task,
         ]);
+      
     }
 
     /**
@@ -56,8 +56,9 @@ class TasksController extends Controller
          // タスクを作成
         $task = new Task;
         $task->content = $request->content;
+        $task->status = $request->status;    // 追加
         $task->save();
-
+       
         // トップページへリダイレクトさせる
         return redirect('/');
     }
@@ -76,6 +77,7 @@ class TasksController extends Controller
         // タスク詳細ビューでそれを表示
         return view('tasks.show', [
             'task' => $task,
+        
         ]);
     }
 
@@ -93,6 +95,7 @@ class TasksController extends Controller
         // タスク編集ビューでそれを表示
         return view('tasks.edit', [
             'task' => $task,
+
         ]);
     }
 
@@ -113,8 +116,12 @@ class TasksController extends Controller
         // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
         // タスクを更新
+        $task->status = $request->status;    // 追加
         $task->content = $request->content;
+        
         $task->save();
+        
+
 
         // トップページへリダイレクトさせる
         return redirect('/');
@@ -132,6 +139,7 @@ class TasksController extends Controller
         $task =Task::findOrFail($id);
         // タスクを削除
         $task->delete();
+    
 
         // トップページへリダイレクトさせる
         return redirect('/');
