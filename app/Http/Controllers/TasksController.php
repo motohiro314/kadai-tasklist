@@ -34,7 +34,7 @@ class TasksController extends Controller
     {
          $task = new Task;
 
-        // メッセージ作成ビューを表示
+        // タスク作成ビューを表示
         return view('tasks.create', [
             'task' => $task,
         ]);
@@ -48,7 +48,11 @@ class TasksController extends Controller
      */
     public function store(Request $request)
     {
-         // メッセージを作成
+           // バリデーション
+        $request->validate([
+            'status' => 'required|max:100',
+        ]);
+         // タスクを作成
         $task = new Task;
         $task->content = $request->content;
         $task->save();
@@ -68,7 +72,7 @@ class TasksController extends Controller
          // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
 
-        // メッセージ詳細ビューでそれを表示
+        // タスク詳細ビューでそれを表示
         return view('tasks.show', [
             'task' => $task,
         ]);
@@ -85,7 +89,7 @@ class TasksController extends Controller
         // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
 
-        // メッセージ編集ビューでそれを表示
+        // タスク編集ビューでそれを表示
         return view('tasks.edit', [
             'task' => $task,
         ]);
@@ -100,9 +104,13 @@ class TasksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // idの値でメッセージを検索して取得
+         // バリデーション
+        $request->validate([
+            'status' => 'required|max:100',
+        ]);
+        // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
-        // メッセージを更新
+        // タスクを更新
         $task->content = $request->content;
         $task->save();
 
@@ -118,9 +126,9 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
-        // idの値でメッセージを検索して取得
+        // idの値でタスクを検索して取得
         $task =Task::findOrFail($id);
-        // メッセージを削除
+        // タスクを削除
         $task->delete();
 
         // トップページへリダイレクトさせる
