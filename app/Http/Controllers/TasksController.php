@@ -19,10 +19,8 @@ class TasksController extends Controller
         $tasks = Task::all();
 
         // タスク一覧ビューでそれを表示
-        return view('tasks/index', [
-            'tasks' => $tasks,
-        ]);
-        
+      
+      Route::get('/', 'MicropostsController@index') ; 
     }
 
     /**
@@ -58,6 +56,22 @@ class TasksController extends Controller
         $task->content = $request->content;
         $task->status = $request->status;    // 追加
         $task->save();
+        
+         function store(Request $request)
+    {
+        // バリデーション
+        $request->validate([
+            'content' => 'required|max:255',
+        ]);
+
+        // 認証済みユーザ（閲覧者）の投稿として作成（リクエストされた値をもとに作成）
+        $request->user()->microposts()->create([
+            'content' => $request->content,
+        ]);
+
+        // 前のURLへリダイレクトさせる
+        return back();
+    }
        
         // トップページへリダイレクトさせる
         return redirect('/');
@@ -69,17 +83,17 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+   public function show($id)
     {
-         // idの値でメッセージを検索して取得
-        $task = Task::findOrFail($id);
+        // idの値でユーザを検索して取得
+        $user = User::findOrFail($id);
 
-        // タスク詳細ビューでそれを表示
-        return view('tasks.show', [
-            'task' => $task,
-        
-        ]);
-    }
+        // 関係するモデルの件数をロード
+        $user->loadRelationshipCounts();
+
+        // ユーザの投稿一覧を作成日時の降順で取得
+        $tasklists = $user->tasklists()->orderBy('created_at', 'desc')->paginate(10);
+
 
     /**
      * Show the form for editing the specified resource.
@@ -87,7 +101,7 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+     function edit($id)
     {
         // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
@@ -133,15 +147,17 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+   public function destroy($id)
     {
-        // idの値でタスクを検索して取得
-        $task =Task::findOrFail($id);
-        // タスクを削除
-        $task->delete();
-    
+        // idの値で投稿を検索して取得
+        $micropost = \App\Micropost::findOrFail($id);
 
-        // トップページへリダイレクトさせる
-        return redirect('/');
+        // 認証済みユーザ（閲覧者）がその投稿の所有者である場合は、投稿を削除
+        if (\Auth::id() === $micropost->user_id) {
+            $micropost->delete();
+        }
+
+        // 前のURLへリダイレクトさせる
+        return back();
     }
 }

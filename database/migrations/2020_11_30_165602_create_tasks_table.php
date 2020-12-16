@@ -30,3 +30,6 @@ class CreateTasksTable extends Migration
         Schema::dropIfExists('tasks');
     }
 }
+// 外部キー制約
+            $table->foreign('user_id')->references('id')->on('users');
+    ;
