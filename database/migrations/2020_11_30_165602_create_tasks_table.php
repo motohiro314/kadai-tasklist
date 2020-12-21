@@ -15,12 +15,16 @@ class CreateTasksTable extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('content');    // contentカラム追加　 
+            $table->string('content');    // contentカラム追加
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
         });
     }
 
     /**
+// 外部キー制約
+            $table->foreign('user_id')->references('id')->on('users');
+    
      * Reverse the migrations.
      *
      * @return void
@@ -30,6 +34,3 @@ class CreateTasksTable extends Migration
         Schema::dropIfExists('tasks');
     }
 }
-// 外部キー制約
-            $table->foreign('user_id')->references('id')->on('users');
-    ;

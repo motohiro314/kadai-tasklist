@@ -8,15 +8,12 @@
                     <div class="card-header">
                         <h3 class="card-title">{{ Auth::user()->name }}</h3>
                     </div>
-                    
                 </div>
             </aside>
             <div class="col-sm-8">
-                  {{-- 投稿フォーム --}}
-                @include('tasklists.form')
-                {{-- 投稿一覧 --}}
-                @include('tasklists.tasklists')
-            </div>
+                //{{-- 投稿一覧 --}}
+               // @include('tasks.index ')
+           // </div>
         </div>
     @else
         <div class="center jumbotron">
@@ -25,6 +22,5 @@
                 {{-- ユーザ登録ページへのリンク --}}
                 {!! link_to_route('signup.get', 'Sign up now!', [], ['class' => 'btn btn-lg btn-primary']) !!}
             </div>
-        </div>
     @endif
 @endsection

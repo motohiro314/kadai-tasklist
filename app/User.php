@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','status'
+        'name', 'email', 'password','status',
     ];
 
     /**
@@ -25,7 +25,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'user_id',          
     ];
 
     /**
@@ -40,14 +40,15 @@ class User extends Authenticatable
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'user_id' =>$data['user_id']
         ]);*/
 
     /**
      * このユーザが所有する投稿。（ Micropostモデルとの関係を定義）
      */
-    public function microposts()
+    public function tasks()
     {
-        return $this->hasMany(Micropost::class);
+        return $this->hasMany(Task::class);
     }
 }
 
@@ -56,5 +57,5 @@ class User extends Authenticatable
      */
      function loadRelationshipCounts()
     {
-        $this->loadCount('microposts');
+        $this->loadCount('tasks');
     }

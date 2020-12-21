@@ -7,28 +7,49 @@ use Illuminate\Http\Request;
 use App\Task;    // 追加
 
 class TasksController extends Controller
-{
+{ 
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        // タスク一覧を取得
-        $tasks = Task::all();
+   // public function index()
+   // {
+         // タスク一覧を取得
+         // $tasks = Task::all();
 
-        // タスク一覧ビューでそれを表示
-      
-      Route::get('/', 'MicropostsController@index') ; 
+         // タスク一覧ビューでそれを表示
+         //  return view('tasks/welcome', [
+         //      'tasks' => $tasks,
+         //  ]);
+        
+
+        // {
+     function index()
+ {
+             $data = [];
+         if (\Auth::check()) { // 認証済みの場合
+            // 認証済みユーザを取得
+            $user = \Auth::user();
+            // ユーザの投稿の一覧を作成日時の降順で取得
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+                //'user_id' =>$user_id,
+            ];
+        }
+        // Welcomeビューでそれらを表示
+        return view ('tasks.index');
     }
+//}
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+     function create()
     {
          $task = new Task;
         // タスク作成ビューを表示
@@ -44,7 +65,7 @@ class TasksController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+     function store(Request $request)
     {
            // バリデーション
         $request->validate([
@@ -54,24 +75,9 @@ class TasksController extends Controller
          // タスクを作成
         $task = new Task;
         $task->content = $request->content;
-        $task->status = $request->status;    // 追加
+        $task->status = $request->status; 
+        $task->user_id=$request->user_id;  // 追加
         $task->save();
-        
-         function store(Request $request)
-    {
-        // バリデーション
-        $request->validate([
-            'content' => 'required|max:255',
-        ]);
-
-        // 認証済みユーザ（閲覧者）の投稿として作成（リクエストされた値をもとに作成）
-        $request->user()->microposts()->create([
-            'content' => $request->content,
-        ]);
-
-        // 前のURLへリダイレクトさせる
-        return back();
-    }
        
         // トップページへリダイレクトさせる
         return redirect('/');
@@ -83,17 +89,17 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-   public function show($id)
+     function show($id)
     {
-        // idの値でユーザを検索して取得
-        $user = User::findOrFail($id);
+         // idの値でメッセージを検索して取得
+        $task = Task::findOrFail($id);
 
-        // 関係するモデルの件数をロード
-        $user->loadRelationshipCounts();
-
-        // ユーザの投稿一覧を作成日時の降順で取得
-        $tasklists = $user->tasklists()->orderBy('created_at', 'desc')->paginate(10);
-
+        // タスク詳細ビューでそれを表示
+        return view('tasks.show', [
+            'task' => $task,
+        
+        ]);
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -120,7 +126,7 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+     function update(Request $request, $id)
     {
          // バリデーション
         $request->validate([
@@ -132,7 +138,7 @@ class TasksController extends Controller
         // タスクを更新
         $task->status = $request->status;    // 追加
         $task->content = $request->content;
-        
+        $task->user_id = $request->user_id;  //追加
         $task->save();
         
 
@@ -147,17 +153,15 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-   public function destroy($id)
+     function destroy($id)
     {
-        // idの値で投稿を検索して取得
-        $micropost = \App\Micropost::findOrFail($id);
+        // idの値でタスクを検索して取得
+        $task =Task::findOrFail($id);
+        // タスクを削除
+        $task->delete();
+    
 
-        // 認証済みユーザ（閲覧者）がその投稿の所有者である場合は、投稿を削除
-        if (\Auth::id() === $micropost->user_id) {
-            $micropost->delete();
-        }
-
-        // 前のURLへリダイレクトさせる
-        return back();
+        // トップページへリダイレクトさせる
+        return redirect('/');
     }
 }
