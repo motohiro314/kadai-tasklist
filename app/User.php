@@ -16,7 +16,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','status',
+        'name', 'email', 'password','status','user_id',
+    
     ];
 
     /**
@@ -25,7 +26,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'user_id',          
+        'password', 'remember_token',           
     ];
 
     /**
@@ -36,12 +37,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-     /* User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'user_id' =>$data['user_id']
-        ]);*/
+     
 
     /**
      * このユーザが所有する投稿。（ Micropostモデルとの関係を定義）
@@ -55,7 +51,24 @@ class User extends Authenticatable
   /**
      * このユーザに関係するモデルの件数をロードする。
      */
-     function loadRelationshipCounts()
+    /* function loadRelationshipCounts()
     {
         $this->loadCount('tasks');
-    }
+    }*/
+    
+ 
+
+
+    
+
+     function task()
+    {
+        return $this->hasMany(task::class);
+    } 
+    
+
+  function loadRelationshipCounts()
+   { 
+        $this->loadCount('task');
+    
+   }   

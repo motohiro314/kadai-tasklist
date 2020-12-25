@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Task;    // 追加
+use Auth;
 
 class TasksController extends Controller
 { 
@@ -13,36 +14,29 @@ class TasksController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-   // public function index()
-   // {
-         // タスク一覧を取得
-         // $tasks = Task::all();
+    public function index()
 
-         // タスク一覧ビューでそれを表示
-         //  return view('tasks/welcome', [
-         //      'tasks' => $tasks,
-         //  ]);
+    {
         
 
-        // {
-     function index()
- {
-             $data = [];
-         if (\Auth::check()) { // 認証済みの場合
+            $data = [];
+
             // 認証済みユーザを取得
+         if (\Auth::check()) { // 認証済みの場合
             $user = \Auth::user();
             // ユーザの投稿の一覧を作成日時の降順で取得
-            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+           $tasks= $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
             $data = [
                 'user' => $user,
                 'tasks' => $tasks,
-                //'user_id' =>$user_id,
-            ];
-        }
+                ];   
+           
+         }
         // Welcomeビューでそれらを表示
-        return view ('tasks.index');
+        
+          return view('tasks/welcome',$data);
     }
-//}
+
 
     /**
      * Show the form for creating a new resource.
@@ -76,7 +70,7 @@ class TasksController extends Controller
         $task = new Task;
         $task->content = $request->content;
         $task->status = $request->status; 
-        $task->user_id=$request->user_id;  // 追加
+        $task->user_id= Auth::id();  // 追加
         $task->save();
        
         // トップページへリダイレクトさせる
@@ -138,7 +132,6 @@ class TasksController extends Controller
         // タスクを更新
         $task->status = $request->status;    // 追加
         $task->content = $request->content;
-        $task->user_id = $request->user_id;  //追加
         $task->save();
         
 
@@ -165,3 +158,4 @@ class TasksController extends Controller
         return redirect('/');
     }
 }
+
