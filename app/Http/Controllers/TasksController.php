@@ -7,37 +7,37 @@ use Illuminate\Http\Request;
 use App\Task;    // 追加
 use Auth;
 
+
 class TasksController extends Controller
 { 
+   
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
-
     {
-        
-
             $data = [];
 
             // 認証済みユーザを取得
          if (\Auth::check()) { // 認証済みの場合
             $user = \Auth::user();
             // ユーザの投稿の一覧を作成日時の降順で取得
-           $tasks= $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+            $tasks= $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
             $data = [
                 'user' => $user,
                 'tasks' => $tasks,
                 ];   
-           
+    
          }
         // Welcomeビューでそれらを表示
         
-          return view('tasks/welcome',$data);
+          return view('tasks.welcome',$data);
+  
+
     }
-
-
     /**
      * Show the form for creating a new resource.
      *
@@ -60,6 +60,8 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
      function store(Request $request)
+    
+        
     {
            // バリデーション
         $request->validate([
@@ -84,9 +86,14 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
      function show($id)
+    
+        
     {
          // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
+         if( Auth::id()!==$task->user_id){
+            return redirect('/');
+         }
 
         // タスク詳細ビューでそれを表示
         return view('tasks.show', [
@@ -102,10 +109,15 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
      function edit($id)
+    
+        
     {
         // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
-
+         if( Auth::id()!==$task->user_id){
+            return redirect('/');
+         }
+        
         // タスク編集ビューでそれを表示
         return view('tasks.edit', [
             'task' => $task,
@@ -121,6 +133,8 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
      function update(Request $request, $id)
+   
+        
     {
          // バリデーション
         $request->validate([
@@ -133,7 +147,7 @@ class TasksController extends Controller
         $task->status = $request->status;    // 追加
         $task->content = $request->content;
         $task->save();
-        
+    
 
 
         // トップページへリダイレクトさせる
@@ -147,15 +161,26 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
      function destroy($id)
+     
+        
     {
         // idの値でタスクを検索して取得
         $task =Task::findOrFail($id);
         // タスクを削除
+         if( Auth::id()!==$task->user_id){
+            return redirect('/');
+         }
         $task->delete();
+        
     
 
         // トップページへリダイレクトさせる
-        return redirect('/');
+        
+        
+        
+         return redirect('/');
+        
     }
+    
 }
 

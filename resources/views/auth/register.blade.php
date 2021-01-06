@@ -4,7 +4,8 @@
     <div class="text-center">
         <h1>Sign up</h1>
     </div>
-
+ $this->middleware('guest');
+  protected $redirectTo = RouteServiceProvider::HOME;
     <div class="row">
         <div class="col-sm-6 offset-sm-3">
 
